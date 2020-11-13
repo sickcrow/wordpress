@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-fn
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress-fn
+  template:
+    metadata:
+      labels:
+        app: wordpress-fn
+    spec:
+      containers:
+      - image: wordpress
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: WORDPRESS_DB_USER
+            value: root
+          - name: WORDPRESS_DB_NAME
+            value: xxx
+          - name: WORDPRESS_DB_HOST
+            value: "mysql-fn-svc:3306"
+          - name: WORDPRESS_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql-fn-pwd
+                key: db_passwd
+        resources:
+          limits: 
+            cpu: "300m"
+            memory: "512Mi"
+          requests:
+            cpu: "150m"
+            memory: "256Mi"
+        volumeMounts:
+        - name: wordpress-fn
+          mountPath: /var/www/html
+        - name: wordpress-fn-config
+          mountPath: /usr/local/etc/php/conf.d/docker-uploads.ini
+          subPath: docker-uploads.ini
+        name: wordpress-fn
+        ports:
+        - containerPort: 80
+          name: wordpress
+          protocol: TCP
+      volumes:
+      - name: wordpress-fn
+        persistentVolumeClaim:
+          claimName: wordpress-fn-pvc
+      - name: wordpress-fn-config
+        configMap: 
+          name: wordpress-fn-config

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wordpress-fn-config
+  namespace: default
+data:
+  docker-uploads.ini: |
+    # Allow HTTP file uploads
+    file_uploads = On
+
+    # Maximum size of an uploaded file
+    upload_max_filesize = 64M
+
+    # Maximum size of form post data
+    post_max_size = 64M
+
+    #max_input_vars = 1000

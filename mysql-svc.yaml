@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-fn-svc
+  namespace: default
+  labels:
+    service: mysql-fn-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: mysql-fn
+  ports:
+  - name: mysql
+    port: 3306
+    protocol: TCP
+    targetPort: 3306
